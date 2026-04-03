@@ -190,7 +190,7 @@ if __name__ == "__main__":
     # scan
     theta_grid = np.geomspace(1e-6, 1e-1, 800)
     X_obs, W_obs = load_root_features("/eos/user/y/yzhang4/LIV/LO/MG_LHE_ppZZto4L_LO_theta_5e-5/result/total.root")
-    W_obs = np.ones_like(W_obs)
+    # W_obs = np.ones_like(W_obs)
     # best_theta, logL = scan_theta(model, X_obs, theta_grid, X_mean, X_std)
     best_theta, logL = scan_theta(model, X_obs, W_obs, theta_grid)
 
