@@ -79,10 +79,12 @@ def build_dataset(X, W, theta_value, is_signal, X_mean, X_std):
 # Likelihood
 # -------------------------------
 
-def compute_log_likelihood(model, X, W, theta, eps=1e-6):
+def compute_log_likelihood(model, X, W, theta, X_mean, X_std, eps=1e-6):
     model.eval()
 
-    X_t = torch.tensor(X, dtype=torch.float32)
+    X_norm = (X - X_mean) / X_std
+
+    X_t = torch.tensor(X_norm, dtype=torch.float32)
     theta_t = torch.ones(X.shape[0]) * theta
     W_t = torch.tensor(W, dtype=torch.float32)
 
@@ -121,10 +123,10 @@ def compute_log_likelihood(model, X, W, theta, eps=1e-6):
 # Scan
 # -------------------------------
 
-def scan_theta(model, X, W, theta_grid):
+def scan_theta(model, X, W, theta_grid, X_mean, X_std):
     logL = []
     for t in theta_grid:
-        logL.append(compute_log_likelihood(model, X, W, t))
+        logL.append(compute_log_likelihood(model, X, W, t, X_mean, X_std))
 
     logL = np.array(logL)
     best_theta = theta_grid[np.argmax(logL)]
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     X_obs, W_obs = load_root_features("/eos/user/y/yzhang4/LIV/LO/MG_LHE_ppZZto4L_LO_theta_5e-5/result/total.root")
     # W_obs = np.ones_like(W_obs)
     # best_theta, logL = scan_theta(model, X_obs, theta_grid, X_mean, X_std)
-    best_theta, logL = scan_theta(model, X_obs, W_obs, theta_grid)
+    best_theta, logL = scan_theta(model, X_obs, W_obs, theta_grid, X_mean, X_std)
 
     print("Best theta:", best_theta)
 
@@ -201,6 +203,7 @@ if __name__ == "__main__":
     plt.figure()
     plt.plot(theta_grid, delta_logL)
     plt.xscale("log")
+    plt.ylim(0, 20)
 
     plt.xlabel("theta")
     plt.ylabel(r"$-2\Delta \log L$")
