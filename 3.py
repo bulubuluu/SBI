@@ -35,8 +35,8 @@ def load_root_features(file_path, tree_name="LHEF", epsilon=1e-12, max_weight=1e
     
     # Safe ratio with epsilon
     ratio = np.zeros(len(safe_NC_amp))
-    nonzero_mask = np.abs(safe_NC_amp) > epsilon
-    ratio[nonzero_mask] = safe_SM_amp[nonzero_mask] / safe_NC_amp[nonzero_mask]
+    nonzero_mask = np.abs(safe_SM_amp) > epsilon
+    ratio[nonzero_mask] = safe_NC_amp[nonzero_mask] / safe_SM_amp[nonzero_mask]
 
     sample_weight = 1.0 + ratio
     sample_weight = np.clip(sample_weight, 0, max_weight)
